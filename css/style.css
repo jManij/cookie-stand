@@ -26,3 +26,23 @@ main ul {
   margin: auto;
   float: inline-start;
 }
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: fit-content;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+#sales-forecast {
+  background-color:cadetblue
+}

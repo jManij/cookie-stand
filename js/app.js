@@ -1,149 +1,109 @@
 'use strict';
 
+/******************************************CONSTRUCTOR**********************************************************************************/
+function Stores(name, minCustomerPerHour, maxCustomersPerHour, avgCookiePerSale) {
 
-var firstAndPike = {
   //Properties
-  name : 'First & Pike',
-  minCustomersPerHour : 23,
-  maxCustomersPerHour : 65,
-  avgCookiePerSale : 6.3,
-  sales : [],
+  this.name = name;
+  this.minCustomerPerHour = minCustomerPerHour;
+  this.maxCustomersPerHour = maxCustomersPerHour;
+  this.avgCookiePerSale = avgCookiePerSale;
+  this.sales = [];
+}
 
-  //Functions
-  generateRandomCustomers : function() {
-    var result = Math.floor(Math.random() * firstAndPike.maxCustomersPerHour) + firstAndPike.minCustomersPerHour; //Generate random numbers in betweeen 23-65
-    // console.log(result);
-    return result;
+/**************************************FUNCTION DEFINITION FOR THE CONSTRUCTOR**********************************************************/
 
-  }
-
+/* Generate random numbers of customers based on the flow of maximum and minimum customers per hour */
+Stores.prototype.generateRandomCustomers = function() {
+  var result = Math.floor(Math.random() * this.maxCustomersPerHour) + this.minCustomerPerHour; //Generate random numbers betn: MIN & MAX
+  return result;
 };
 
-var SeaTacAirport = {
-  name : 'SeaTac Airport',
-  minCustomersPerHour : 3,
-  maxCustomersPerHour : 24,
-  avgCookiePerSale : 1.2,
-  sales : [],
-
-  //Functions
-  generateRandomCustomers : function() {
-    var result = Math.floor(Math.random() * SeaTacAirport.maxCustomersPerHour) + SeaTacAirport.minCustomersPerHour; //Generate random numbers in betweeen 3-24
-    // console.log(result);
-    return result;
-
-  }
-
-};
-
-var SeattleCenter = {
-  name : 'Seattle Center',
-  minCustomersPerHour : 11,
-  maxCustomersPerHour : 38,
-  avgCookiePerSale : 3.7,
-  sales : [],
-
-  //Functions
-  generateRandomCustomers : function() {
-    var result = Math.floor(Math.random() * SeattleCenter.maxCustomersPerHour) + SeattleCenter.minCustomersPerHour; //Generate random numbers in betweeen 11-38
-    // console.log(result);
-    return result;
-
-  }
-
-};
-
-var CapitolHill = {
-  name : 'Capitol Hill',
-  minCustomersPerHour : 20,
-  maxCustomersPerHour : 38,
-  avgCookiePerSale : 2.3,
-  sales : [],
-
-  //Functions
-  generateRandomCustomers : function() {
-    var result = Math.floor(Math.random() * CapitolHill.maxCustomersPerHour) + CapitolHill.minCustomersPerHour; //Generate random numbers in betweeen 20-38
-    // console.log(result);
-    return result;
-
-  }
-
-};
-
-var Alki = {
-  name : 'Alki',
-  minCustomersPerHour : 2,
-  maxCustomersPerHour : 16,
-  avgCookiePerSale : 4.6,
-  sales : [],
-
-  //Functions
-  generateRandomCustomers : function() {
-    var result = Math.floor(Math.random() * Alki.maxCustomersPerHour) + Alki.minCustomersPerHour; //Generate random numbers in betweeen 2-16
-    // console.log(result);
-    return result;
-
-  }
-
-};
-
-//Array representing all 5 stores
-var storesArray = [firstAndPike, SeaTacAirport, SeattleCenter, CapitolHill, Alki];
-
-
-/**
- * Generates total sales and puts into results of each stores
- * @param {array} storeArr - The storeArr containing all 5 stores.
- */
-function generateTotalSales (storeArr){
+/* Generates total sales and puts into results of each stores */
+Stores.prototype.generateSalesForecast = function() {
   var calculation; //Number of cookies sold based on average cookies and random number of customers
-  var finalResult; //A concatinated final result
-  var totalSales = 0; //Sum of total cookies from 6 am to 8 pm
-  var finalSalesHour = 20; //Military Standard hours for 8 pm
+  var startTime = 6; //Military Standard hours for 6 am
+  var endTime = 20; //Military Standard hours for 8 pm
+  var totalSales = 0; //Sum of total cookies from start to end time
 
-  for (var i = 0; i < storeArr.length; i++) {
+  for (var j = startTime; j <= endTime; j++) {
+    calculation = Math.round (this.avgCookiePerSale * this.generateRandomCustomers()); //Calculates and round to nearest integer
+    totalSales += calculation;
+    this.sales.push(calculation);
+  }
+  this.sales.push(totalSales); //Make a final push of total cookies
 
-    for (var j = 6; j <= finalSalesHour; j++) {
-      calculation = Math.round (storeArr[i].avgCookiePerSale * storeArr[i].generateRandomCustomers()); //Calculates and round to nearest integer
-      totalSales += calculation;
+};
 
-      if (j <= 12) {
-        finalResult = j + 'am: ' + calculation + ' cookies';
-        storeArr[i].sales.push(finalResult);
-      }
-      else {
-        finalResult = (j - 12) + 'pm: ' + calculation + ' cookies';
-        storeArr[i].sales.push(finalResult);
-      }
+/*  Rendering function for the store object */
+Stores.prototype.generateRendering = function() {
+  var tableEl = document.getElementById('sales-forecast');
+  var trEl = document.createElement('tr');
+  var tdNameEl = document.createElement('td');
+  tdNameEl.textContent = this.name;
+  trEl.appendChild(tdNameEl);
+  tableEl.appendChild(trEl);
+  var tdEl = [];
+  for (var i = 0; i < this.sales.length; i++) {
+    tdEl[i] = document.createElement('td');
+    tdEl[i].textContent = this.sales[i];
+    trEl.appendChild(tdEl[i]);
+    tableEl.appendChild(trEl);
+  }
 
+};
+/**************************************MAIN FUNCTION TO RUN THE SCRIPT*****************************************************************/
+function generateStoreData() {
+//Create Objects and store in array of stores
+  var arrayOfStores = [];
+  var totalOfColumns = []; //Stores total of the column
+  arrayOfStores.push(new Stores('First & Pike', 23, 65, 6.3));
+  arrayOfStores.push(new Stores('SeaTac Airport', 3, 24, 1.2));
+  arrayOfStores.push(new Stores('Seattle Center', 11, 38, 3.7));
+  arrayOfStores.push(new Stores('Capitol Hill', 20, 38, 2.3));
+  arrayOfStores.push(new Stores('Alki', 2, 16, 4.6));
+
+  /* Generate Sales Forecast and display elements on table for each stores  */
+  for (var i = 0; i < arrayOfStores.length; i++) {
+    arrayOfStores[i].generateSalesForecast();
+    arrayOfStores[i].generateRendering();
+  }
+
+  /* Generates total of the columns in the display and store in the array*/
+  for (i = 0; i < arrayOfStores[0].sales.length; i++) {
+    var total = 0;
+    for (var j = 0; j < arrayOfStores.length; j++) {
+      total += arrayOfStores[j].sales[i];
     }
+    console.log(total);
+    totalOfColumns.push(total);
 
-    finalResult = 'Total: ' + totalSales + ' cookies';
-    storeArr[i].sales.push(finalResult); //Make a final push of total cookies
   }
 
+  /* Final Rendering for the 'Totals' row */
+  var tableEl = document.getElementById('sales-forecast');
+  var trEl = document.createElement('tr');
+  var tdNameEl = document.createElement('td');
+  tdNameEl.textContent = 'Totals';
+  trEl.appendChild(tdNameEl);
+  tableEl.appendChild(trEl);
+  var tdEl = [];
+  for (i = 0; i < totalOfColumns.length; i++) {
+    tdEl[i] = document.createElement('td');
+    tdEl[i].textContent = totalOfColumns[i];
+    trEl.appendChild(tdEl[i]);
+    tableEl.appendChild(trEl);
+  }
+
+  //test to validate data in console
+  for (i = 0; i < arrayOfStores.length; i++) {
+    console.log(arrayOfStores[i].name);
+    for (j = 0; j < 16; j++) {
+      console.log(arrayOfStores[i].sales[j]);
+    }
+  }
 
 }
 
-generateTotalSales(storesArray); //Generates total sales forecast
-
-
-//DOM manipulation
-for (var i =0; i < storesArray.length; i++) {
-  var storeContainerULEL = document.getElementById('store-container');
-  var h2El = document.createElement('h4');
-  h2El.textContent = storesArray[i].name;
-  storeContainerULEL.appendChild(h2El);
-
-  for (var j = 0; j < 16; j++) {
-    var liEl = document.createElement('li');
-    var p2El = document.createElement('p2');
-
-
-    p2El.textContent = storesArray[i].sales[j];
-
-    liEl.appendChild(p2El);
-    storeContainerULEL.appendChild(liEl);
-  }
-
-}
+/* ***********************************DRIVER**********************************************************************************************************/
+generateStoreData();
