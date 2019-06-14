@@ -88,14 +88,27 @@ function generateTotalRows() {
 }
 
 /**************************************MAIN FUNCTION TO RUN THE SCRIPT*****************************************************************/
+/*
+Default Objects created
+*/
 var arrayOfStores = [];
 var newRow = -1; //New row when submitted
 var ColumnCount = 0;
-var rowDisplayFlag = false;
+
+
+function generateDefaultSummary() {
+  var defaultStoreNames = ['Alki', '1st and Pike', 'SeaTac Airport', 'Capitol Hill', 'Seattle Center' ];
+  for (newRow = 0; newRow < defaultStoreNames.length; newRow++) {
+    arrayOfStores.push(new Stores(defaultStoreNames[newRow], 5, 65, 3.2));
+    arrayOfStores[newRow].generateSalesForecast();
+    arrayOfStores[newRow].generateRendering();
+  }
+  generateTotalRows();
+  ColumnCount++;
+  newRow--;
+}
 
 function generateStoreData(location, minCustomerPerHour, maxCustomersPerHour, avgCookiePerSale) {
-  rowDisplayFlag = true;
-
   if (ColumnCount >= 1) {
     ColumnCount = 0;
     newRow++;
@@ -117,6 +130,7 @@ function generateStoreData(location, minCustomerPerHour, maxCustomersPerHour, av
 /* ***********************************DRIVER**********************************************************************************************************/
 
 var form = document.getElementById('add-store');
+generateDefaultSummary();
 var handleFormSubmit = function(formSubmitEvent){
 
   formSubmitEvent.preventDefault();
@@ -124,7 +138,7 @@ var handleFormSubmit = function(formSubmitEvent){
   var minCustomer = formSubmitEvent.target.minCustomer.value;
   var maxCustomer = formSubmitEvent.target.maxCustomer.value;
   var avgCookies = formSubmitEvent.target.avgCookies.value;
-  
+
   generateStoreData(locationName, parseInt(minCustomer), parseInt(maxCustomer), parseFloat(avgCookies));
 };
 form.addEventListener('submit', handleFormSubmit);
